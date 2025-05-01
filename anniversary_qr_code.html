@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Anniversary Space</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffe6f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #ff4081;
+            margin-bottom: 10px;
+        }
+        
+        .message {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            background-color: #ff6699;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .option:hover {
+            transform: scale(1.05);
+            background-color: #ff4081;
+        }
+        
+        #countdown {
+            font-size: 18px;
+            color: #ff4081;
+            margin: 20px 0;
+        }
+        
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            animation: float 5s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .balloon {
+            position: absolute;
+            pointer-events: none;
+            animation: float-balloon 10s ease-in-out infinite;
+        }
+        
+        @keyframes float-balloon {
+            0% { transform: translateY(100vh) translateX(0); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+        
+        .heart-button {
+            background: none;
+            border: none;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 20px;
+        }
+        
+        .heart-button:hover {
+            transform: scale(1.2);
+        }
+        
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .emoji {
+            position: absolute;
+            font-size: 30px;
+            animation: fall 5s linear forwards;
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .caption-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        #today-caption {
+            font-size: 18px;
+            color: #ff4081;
+            font-style: italic;
+        }
+        
+        /* Chat page styles */
+        #chat-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffe6f2;
+            z-index: 100;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-button {
+            background-color: #ff6699;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .chat-container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+        
+        .chat-input {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        
+        .send-button {
+            background-color: #ff6699;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .message-his {
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            color: #333;
+            border-radius: 18px 18px 18px 0;
+        }
+        
+        .message-her {
+            align-self: flex-end;
+            background-color: #ff6699;
+            color: white;
+            border-radius: 18px 18px 0 18px;
+        }
+        
+        .sender-name {
+            font-size: 12px;
+            margin-bottom: 3px;
+            opacity: 0.7;
+        }
+        
+        .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 2px;
+            text-align: right;
+        }
+        
+        .message-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 8px;
+        }
+        
+        .user-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .user-option {
+            background-color: #ff6699;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .user-option.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-page">
+        <div id="normal-content">
+            <h1>Welcome to Our Special Space</h1>
+            <div class="message">
+                <p id="welcome-message">Welcome love to our space! ❤️</p>
+            </div>
+            <div class="caption-container">
+                <p>Today's Caption:</p>
+                <p id="today-caption">Every day with you is a blessing!</p>
+            </div>
+            <div id="countdown"></div>
+        </div>
+        
+        <div id="celebration-content" style="display: none;">
+            <h1>Happy One Year Anniversary! 🎉</h1>
+            <div class="message">
+                <p>One year of beautiful memories, laughter, and love. You make every day special, and I'm so grateful for you. Here's to many more amazing years together! ❤️</p>
+            </div>
+            <button class="heart-button" id="heart-pop">❤️</button>
+            <div class="caption-container">
+                <p>Today's Caption:</p>
+                <p id="anniversary-caption">One year down, forever to go! ❤️</p>
+            </div>
+        </div>
+        
+        <div class="options">
+            <button class="option" id="chat-button">Our Chat Room</button>
+            <button class="option" id="caption-button">Change Today's Caption</button>
+        </div>
+    </div>
+    
+    <!-- Chat Page -->
+    <div id="chat-page">
+        <div class="chat-header">
+            <h1>Our Special Chat Room</h1>
+            <button class="back-button" id="back-to-main">Back to Main</button>
+        </div>
+        
+        <div class="user-selector">
+            <button class="user-option" id="his-option">His Messages</button>
+            <button class="user-option active" id="her-option">Her Messages</button>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages"></div>
+            
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="message-input" placeholder="Type your message...">
+                <button class="send-button" id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="celebration" id="celebration-effects"></div>
+    
+    <script>
+        // Global variables
+        let currentUser = 'her'; // Default user is 'her'
+        
+        // Check if it's the anniversary date
+        function checkAnniversaryDate() {
+            const today = new Date();
+            const isAnniversary = today.getDate() === 1 && today.getMonth() === 4; // May 1st (month is 0-indexed)
+            
+            if (isAnniversary) {
+                document.getElementById('normal-content').style.display = 'none';
+                document.getElementById('celebration-content').style.display = 'block';
+                startCelebration();
+            } else {
+                updateCountdown();
+                setInterval(updateCountdown, 60000); // Update countdown every minute
+            }
+        }
+        
+        // Update countdown to next anniversary
+        function updateCountdown() {
+            const today = new Date();
+            let nextAnniversary = new Date(today.getFullYear(), 4, 1); // May 1st
+            
+            if (today > nextAnniversary) {
+                nextAnniversary = new Date(today.getFullYear() + 1, 4, 1);
+            }
+            
+            const timeDiff = nextAnniversary - today;
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            document.getElementById('countdown').innerHTML = `${days} days, ${hours} hours, and ${minutes} minutes until our next anniversary! ❤️`;
+        }
+        
+        // Start celebration effects
+        function startCelebration() {
+            // Create floating emojis
+            const emojis = ['❤️', '🎉', '🎈', '🥰', '💕', '✨', '💘', '💖', '🎊'];
+            const celebrationDiv = document.getElementById('celebration-effects');
+            celebrationDiv.style.display = 'block';
+            
+            // Create initial batch of emojis
+            for (let i = 0; i < 50; i++) {
+                createEmoji();
+            }
+            
+            // Continue creating emojis
+            setInterval(createEmoji, 300);
+            
+            function createEmoji() {
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji';
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = Math.random() * 100 + 'vw';
+                emoji.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                celebrationDiv.appendChild(emoji);
+                
+                // Remove emoji after animation ends
+                setTimeout(() => {
+                    emoji.remove();
+                }, 5000);
+            }
+            
+            // Change background color
+            document.body.style.backgroundColor = '#ffebf2';
+        }
+        
+        // Heart popping effect
+        document.getElementById('heart-pop').addEventListener('click', function() {
+            const heartButton = this;
+            const heartContainer = document.createElement('div');
+            heartContainer.style.position = 'absolute';
+            heartContainer.style.left = (heartButton.getBoundingClientRect().left - 20) + 'px';
+            heartContainer.style.top = (heartButton.getBoundingClientRect().top - 20) + 'px';
+            
+            for (let i = 0; i < 10; i++) {
+                const heart = document.createElement('div');
+                heart.innerText = '❤️';
+                heart.className = 'heart';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.left = (Math.random() * 80 - 40) + 'px';
+                heart.style.top = (Math.random() * 80 - 40) + 'px';
+                heartContainer.appendChild(heart);
+            }
+            
+            document.body.appendChild(heartContainer);
+            
+            setTimeout(() => {
+                heartContainer.remove();
+            }, 5000);
+        });
+        
+        // Open chat page
+        document.getElementById('chat-button').addEventListener('click', function() {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('chat-page').style.display = 'block';
+            loadChatMessages();
+        });
+        
+        // Back to main page
+        document.getElementById('back-to-main').addEventListener('click', function() {
+            document.getElementById('chat-page').style.display = 'none';
+            document.getElementById('main-page').style.display = 'block';
+        });
+        
+        // User selector
+        document.getElementById('his-option').addEventListener('click', function() {
+            currentUser = 'his';
+            document.getElementById('his-option').classList.add('active');
+            document.getElementById('her-option').classList.remove('active');
+        });
+        
+        document.getElementById('her-option').addEventListener('click', function() {
+            currentUser = 'her';
+            document.getElementById('her-option').classList.add('active');
+            document.getElementById('his-option').classList.remove('active');
+        });
+        
+        // Send message
+        document.getElementById('send-message').addEventListener('click', sendMessage);
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (message !== '') {
+                // Add message to chat
+                addMessageToChat(currentUser, message);
+                
+                // Save message to local storage
+                saveChatMessage(currentUser, message);
+                
+                // Clear input
+                messageInput.value = '';
+            }
+        }
+        
+        function addMessageToChat(sender, message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageGroup = document.createElement('div');
+            messageGroup.className = 'message-group';
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `message-bubble message-${sender}`;
+            
+            const senderName = document.createElement('div');
+            senderName.className = 'sender-name';
+            senderName.innerText = sender === 'his' ? 'Him' : 'Her';
+            
+            const messageText = document.createElement('div');
+            messageText.innerText = message;
+            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.innerText = formatTime(new Date());
+            
+            messageBubble.appendChild(senderName);
+            messageBubble.appendChild(messageText);
+            messageBubble.appendChild(messageTime);
+            
+            messageGroup.appendChild(messageBubble);
+            chatMessages.appendChild(messageGroup);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function formatTime(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            return `${hours}:${minutes} ${ampm}`;
+        }
+        
+        function saveChatMessage(sender, message) {
+            let messages = JSON.parse(localStorage.getItem('anniversary-chat') || '[]');
+            messages.push({
+                sender: sender,
+                message: message,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('anniversary-chat', JSON.stringify(messages));
+        }
+        
+        function loadChatMessages() {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '';
+            
+            let messages = JSON.parse(localStorage.getItem('anniversary-chat') || '[]');
+            
+            messages.forEach(msg => {
+                addMessageToChat(msg.sender, msg.message);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Caption functionality - Fixed
+        document.getElementById('caption-button').addEventListener('click', function() {
+            const newCaption = prompt('Enter a new caption for today:', document.getElementById('today-caption').innerText);
+            if (newCaption !== null && newCaption.trim() !== '') {
+                document.getElementById('today-caption').innerText = newCaption;
+                if (isAnniversaryToday()) {
+                    document.getElementById('anniversary-caption').innerText = newCaption;
+                }
+                localStorage.setItem('anniversary-caption', newCaption);
+            }
+        });
+        
+        function isAnniversaryToday() {
+            const today = new Date();
+            return today.getDate() === 1 && today.getMonth() === 4; // May 1st
+        }
+        
+        // Load saved caption
+        function loadSavedCaption() {
+            const savedCaption = localStorage.getItem('anniversary-caption');
+            if (savedCaption) {
+                document.getElementById('today-caption').innerText = savedCaption;
+                if (isAnniversaryToday()) {
+                    document.getElementById('anniversary-caption').innerText = savedCaption;
+                }
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            checkAnniversaryDate();
+            loadSavedCaption();
+            
+            // Create random balloons
+            for (let i = 0; i < 5; i++) {
+                createBalloon();
+            }
+            
+            setInterval(createBalloon, 5000);
+        };
+        
+        function createBalloon() {
+            const colors = ['red', 'pink', 'purple', 'blue'];
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.innerHTML = '🎈';
+            balloon.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            balloon.style.color = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            document.body.appendChild(balloon);
+            
+            setTimeout(() => {
+                balloon.remove();
+            }, 20000);
+        }
+    </script>
+</body>
+</html>
